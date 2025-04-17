@@ -26,8 +26,8 @@ jobs:
       - name: Get image information
         id: get-image-info
         run: |
-          IMAGE_NAME=$(jq -r '.name' package.json)
-          IMAGE_VERSION=$(jq -r '.version' package.json)
+          IMAGE_NAME=$(jq -r '.name' docker/package.json)
+          IMAGE_VERSION=$(jq -r '.version' docker/package.json)
           echo "IMAGE=quay.io/okdp/$IMAGE_NAME:$IMAGE_VERSION" >> $GITHUB_ENV
 
       - name: Run Trivy scan
