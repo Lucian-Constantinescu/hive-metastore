@@ -1,0 +1,29 @@
+name: Dependabot Updates
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # Runs daily at 5:00 AM
+  workflow_dispatch:
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Dependabot
+        uses: dependabot/dependabot-core@v2
+        with:
+          package-ecosystem: "docker"
+          directory: "/docker"
+          versioning-strategy: "auto"
+          commit-message: "chore(deps): Update Docker dependencies"
+
+      - name: Run Dependabot for Helm
+        uses: dependabot/dependabot-core@v2
+        with:
+          package-ecosystem: "helm"
+          directory: "/helm/hive-metastore"
+          versioning-strategy: "auto"
+          commit-message: "chore(deps): Update Helm dependencies"
