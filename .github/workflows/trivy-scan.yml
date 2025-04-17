@@ -1,0 +1,33 @@
+name: Trivy Scan
+
+on:
+  push:
+    branches: 
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y trivy
+
+      - name: Get image information
+        id: get-image-info
+        run: |
+          IMAGE_NAME=$(jq -r '.name' package.json)
+          IMAGE_VERSION=$(jq -r '.version' package.json)
+          echo "IMAGE=quay.io/okdp/$IMAGE_NAME:$IMAGE_VERSION" >> $GITHUB_ENV
+
+      - name: Run Trivy scan
+        run: |
+          trivy image --exit-code 1 --severity HIGH,CRITICAL $IMAGE
