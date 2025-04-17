@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/docker"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "chore(update)"
+
+  - package-ecosystem: "helm"
+    directory: "/helm/hive-metastore"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "chore(update)"
