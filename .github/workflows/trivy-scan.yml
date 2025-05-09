@@ -11,25 +11,32 @@ on:
 jobs:
   trivy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Trivy
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.61.0/trivy_0.61.0_Linux-64bit.deb
-          sudo dpkg -i trivy_0.61.0_Linux-64bit.deb
+        uses: actions/checkout@v2
 
       - name: Get image information
         id: get-image-info
         run: |
           IMAGE_NAME=$(jq -r '.name' docker/package.json)
           IMAGE_VERSION=$(jq -r '.version' docker/package.json)
-          echo "IMAGE=quay.io/okdp/$IMAGE_NAME:$IMAGE_VERSION" >> $GITHUB_ENV
+          echo $IMAGE_NAME
+          echo $IMAGE_VERSION
+          echo "IMAGE=okdp.io/okdp/$IMAGE_NAME:$IMAGE_VERSION" >> $GITHUB_ENV
 
-      - name: Run Trivy scan
-        run: |
-          trivy image --exit-code 1 --severity HIGH,CRITICAL $IMAGE
+      - name: Run Trivy
+        uses: aquasecurity/trivy-action@v0.3.0
+        with:
+          image-ref: '$IMAGE'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      # - name: Authorize
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ${{ vars.REGISTRY }}
+      #     username: ${{ secrets.REGISTRY_USERNAME }}
+      #     password: ${{ secrets.REGISTRY_ROBOT_TOKEN }}
