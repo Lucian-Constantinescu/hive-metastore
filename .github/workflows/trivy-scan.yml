@@ -27,7 +27,7 @@ jobs:
       - name: Run Trivy
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: '$IMAGE'
+          image-ref: '${{ env.IMAGE }}'
           format: 'table'
           exit-code: '0'
           ignore-unfixed: true
